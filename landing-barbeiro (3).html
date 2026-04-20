@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Barbearia Cheia — Método para Barbeiros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --gold: #E8B84B; --gold-light: #F5D380;
+    --bg: #0C0C0C; --bg2: #141414; --bg3: #1C1C1C;
+    --text: #F0EDE6; --muted: #8A8680;
+    --border: rgba(232, 184, 75, 0.18);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 16px; line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  h1, h2, h3 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+  .container { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+  .topbar { background: var(--gold); color: #0C0C0C; text-align: center; padding: 10px 24px; font-size: 14px; font-weight: 600; letter-spacing: 0.03em; }
+  .section-tag { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 16px; }
+  hr.divider { border: none; border-top: 1px solid var(--border); }
+  .btn-primary { display: inline-block; background: var(--gold); color: #0C0C0C; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 16px; padding: 18px 44px; border-radius: 6px; text-decoration: none; letter-spacing: 0.02em; transition: background 0.2s, transform 0.15s; }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  /* ── HERO ── */
+  .hero { position: relative; padding: 80px 24px 100px; text-align: center; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 560px; height: 560px; border-radius: 50%; background: radial-gradient(circle, rgba(232,184,75,0.10) 0%, transparent 70%); pointer-events: none; }
+  .hero-tag { display: inline-block; border: 1px solid var(--border); color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; padding: 6px 18px; border-radius: 100px; margin-bottom: 28px; }
+  .hero h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 900; color: #fff; max-width: 720px; margin: 0 auto 24px; }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .hero-sub { font-size: 18px; color: var(--muted); max-width: 520px; margin: 0 auto 44px; font-weight: 300; line-height: 1.8; }
+  .hero-note { margin-top: 16px; font-size: 13px; color: var(--muted); }
+
+  /* ── PROBLEM ── */
+  .problem { background: var(--bg2); padding: 80px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .problem h2 { font-size: clamp(26px, 4vw, 40px); color: #fff; max-width: 580px; margin-bottom: 32px; }
+  .pain-list { list-style: none; display: flex; flex-direction: column; gap: 16px; max-width: 600px; }
+  .pain-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 16px; color: var(--muted); line-height: 1.6; }
+  .pain-list li::before { content: '—'; color: var(--gold); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── APP SHOWCASE ── */
+  .app-showcase {
+    padding: 100px 24px;
+    overflow: hidden;
+  }
+  .app-showcase-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .app-text h2 { font-size: clamp(28px, 4vw, 44px); color: #fff; margin-bottom: 16px; }
+  .app-text h2 em { font-style: italic; color: var(--gold); }
+  .app-text p { font-size: 17px; color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+  .app-features { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+  .app-features li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text); }
+  .app-feat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+  /* ── PHONE MOCKUP ── */
+  .phone-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .phone-wrap::before {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,184,75,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .phone {
+    width: 230px;
+    height: 496px;
+    background: #0A0A0A;
+    border-radius: 36px;
+    border: 2px solid #2A2A2A;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 40px 80px rgba(0,0,0,0.8);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* notch */
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 26px;
+    background: #0A0A0A;
+    border-radius: 0 0 16px 16px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .phone-notch-cam {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #1A1A1A;
+    border: 1px solid #2A2A2A;
+  }
+  .phone-notch-bar {
+    width: 38px; height: 4px;
+    border-radius: 2px;
+    background: #1C1C1C;
+  }
+
+  /* screen */
+  .phone-screen {
+    background: #0F0F0F;
+    height: 100%;
+    padding-top: 36px;
+    overflow: hidden;
+  }
+
+  /* app status bar */
+  .app-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 18px 8px;
+    font-size: 9px;
+    color: #666;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* app header */
+  .app-header {
+    background: #141414;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .app-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .app-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+  }
+  .app-logo span { color: #E8B84B; }
+  .app-header-sub {
+    font-size: 9px;
+    color: #555;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .app-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #E8B84B;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #0C0C0C;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* welcome */
+  .app-welcome {
+    padding: 14px 16px 10px;
+    background: linear-gradient(135deg, #1A1500 0%, #0F0F0F 100%);
+    border-bottom: 1px solid rgba(232,184,75,0.12);
+  }
+  .app-welcome-label {
+    font-size: 9px;
+    color: #E8B84B;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .app-welcome-title {
+    font-size: 13px;
+    color: #fff;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+  }
+
+  /* progress bar */
+  .app-progress-row {
+    padding: 10px 16px;
+    background: #141414;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-progress-bar-bg {
+    flex: 1;
+    height: 3px;
+    background: #222;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .app-progress-bar-fill {
+    width: 15%;
+    height: 100%;
+    background: #E8B84B;
+    border-radius: 2px;
+  }
+  .app-progress-text {
+    font-size: 9px;
+    color: #555;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+
+  /* modules list */
+  .app-modules-label {
+    padding: 12px 16px 6px;
+    font-size: 9px;
+    color: #555;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .app-module-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .app-module-item:hover { background: rgba(255,255,255,0.02); }
+  .app-module-item.active { background: rgba(232,184,75,0.07); }
+
+  .app-module-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 13px;
+  }
+  .app-module-icon.google  { background: rgba(66,133,244,0.15); }
+  .app-module-icon.ads     { background: rgba(234,67,53,0.15); }
+  .app-module-icon.insta   { background: rgba(193,53,132,0.15); }
+  .app-module-icon.whats   { background: rgba(37,211,102,0.15); }
+  .app-module-icon.bonus   { background: rgba(232,184,75,0.15); }
+
+  .app-module-info { flex: 1; min-width: 0; }
+  .app-module-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #E0DDD7;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .app-module-sub {
+    font-size: 9px;
+    color: #555;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1px;
+  }
+  .app-module-badge {
+    font-size: 8px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .badge-new { background: rgba(232,184,75,0.2); color: #E8B84B; }
+  .badge-lock { background: rgba(255,255,255,0.05); color: #555; }
+  .badge-done { background: rgba(37,211,102,0.15); color: #25D366; }
+
+  /* side buttons */
+  .phone::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 80px;
+    width: 3px;
+    height: 40px;
+    background: #2A2A2A;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* ── MODULES DETAIL ── */
+  .what { padding: 80px 24px; }
+  .what h2 { font-size: clamp(26px, 4vw, 40px); color: #fff; margin-bottom: 12px; }
+  .what-intro { color: var(--muted); font-size: 17px; max-width: 560px; margin-bottom: 56px; }
+  .module-block { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .module-header { display: flex; align-items: center; gap: 18px; padding: 22px 28px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+  .module-icon { width: 40px; height: 40px; border-radius: 8px; background: rgba(232,184,75,0.10); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .module-icon svg { width: 20px; height: 20px; }
+  .module-label { font-size: 11px; color: var(--gold); font-weight: 600; letter-spacing: 0.10em; text-transform: uppercase; margin-bottom: 3px; }
+  .module-title { font-size: 18px; font-weight: 600; color: #fff; }
+  .module-body { padding: 24px 28px; background: var(--bg); }
+  .module-items { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .module-items li { font-size: 15px; color: var(--muted); display: flex; align-items: flex-start; gap: 12px; line-height: 1.5; }
+  .module-items li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 8px; opacity: 0.6; }
+  .bonus-block { border: 1px solid var(--gold); border-radius: 10px; overflow: visible; margin-bottom: 20px; margin-top: 16px; position: relative; }
+  .bonus-block::before { content: 'BÔNUS INCLUÍDO'; position: absolute; top: -12px; left: 28px; background: var(--gold); color: #0C0C0C; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; padding: 3px 12px; border-radius: 100px; }
+  .bonus-header { padding: 32px 28px 24px; background: rgba(232,184,75,0.05); }
+  .bonus-title { font-size: 20px; font-weight: 700; color: var(--gold); font-family: 'Playfair Display', serif; margin-bottom: 6px; }
+  .bonus-desc { font-size: 15px; color: var(--muted); }
+
+  /* ── FOR WHOM ── */
+  .for-whom { background: var(--bg2); padding: 80px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .for-whom h2 { font-size: clamp(26px, 4vw, 40px); color: #fff; margin-bottom: 40px; }
+  .checks { display: flex; flex-direction: column; gap: 16px; max-width: 580px; }
+  .check-item { display: flex; align-items: flex-start; gap: 16px; font-size: 16px; color: var(--text); }
+  .check-icon { width: 22px; height: 22px; background: rgba(232,184,75,0.12); border: 1px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 3px; }
+  .check-icon svg { width: 11px; height: 11px; }
+
+  /* ── TRUST ── */
+  .trust { padding: 80px 24px; text-align: center; }
+  .trust h2 { font-size: clamp(26px, 4vw, 40px); color: #fff; margin-bottom: 12px; }
+  .trust-sub { color: var(--muted); font-size: 17px; max-width: 500px; margin: 0 auto 52px; }
+  .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; text-align: left; }
+  .trust-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 28px 24px; }
+  .trust-card-icon { width: 36px; height: 36px; background: rgba(232,184,75,0.10); border-radius: 6px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+  .trust-card-icon svg { width: 18px; height: 18px; }
+  .trust-card-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 8px; }
+  .trust-card-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── PRICING ── */
+  .pricing { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 24px; text-align: center; }
+  .pricing h2 { font-size: clamp(26px, 4vw, 40px); color: #fff; margin-bottom: 12px; }
+  .pricing-sub { color: var(--muted); margin-bottom: 48px; font-size: 17px; }
+  .price-box { display: inline-block; background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 48px 52px; max-width: 480px; width: 100%; position: relative; }
+  .price-box::before { content: 'ACESSO COMPLETO'; position: absolute; top: -13px; left: 50%; transform: translateX(-50%); background: var(--gold); color: #0C0C0C; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; padding: 4px 16px; border-radius: 100px; white-space: nowrap; }
+  .price-old { font-size: 15px; color: var(--muted); text-decoration: line-through; margin-bottom: 6px; }
+  .price-val { font-family: 'Playfair Display', serif; font-size: 64px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 4px; }
+  .price-period { font-size: 14px; color: var(--muted); margin-bottom: 32px; }
+  .price-features { list-style: none; text-align: left; margin-bottom: 36px; display: flex; flex-direction: column; gap: 12px; }
+  .price-features li { font-size: 15px; color: var(--text); display: flex; align-items: center; gap: 12px; }
+  .price-features li span { color: var(--gold); font-size: 18px; line-height: 1; }
+  .guarantee { margin-top: 24px; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  /* ── FINAL ── */
+  .final-cta { padding: 100px 24px; text-align: center; }
+  .final-cta h2 { font-size: clamp(30px, 5vw, 52px); color: #fff; max-width: 600px; margin: 0 auto 20px; }
+  .final-cta h2 em { font-style: italic; color: var(--gold); }
+  .final-cta p { color: var(--muted); font-size: 17px; max-width: 400px; margin: 0 auto 44px; }
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; text-align: center; font-size: 13px; color: var(--muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .app-showcase-inner { grid-template-columns: 1fr; gap: 48px; }
+    .phone-wrap { order: -1; }
+    .module-header { padding: 18px 20px; }
+    .module-body { padding: 20px; }
+    .price-box { padding: 44px 24px; }
+    .price-val { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">Produto novo — garantia total de 7 dias, sem perguntas</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Para barbeiros que querem mais clientes</div>
+    <h1>Pare de esperar cliente.<br/>Aprenda a <em>ir buscar.</em></h1>
+    <p class="hero-sub">O guia prático de Google, Instagram e WhatsApp para barbeiros que querem lotar a agenda — mesmo sem experiência com marketing.</p>
+    <a href="#pricing" class="btn-primary">Quero começar a atrair clientes agora</a>
+    <p class="hero-note">Acesso imediato pelo celular · Vídeos + textos · Qualquer cidade</p>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <p class="section-tag">O problema real</p>
+    <h2>Você é bom de tesoura. Mas isso sozinho não enche a agenda.</h2>
+    <ul class="pain-list">
+      <li>A cadeira fica vazia no meio da semana e você não sabe o que fazer além de esperar</li>
+      <li>Depende de indicação — quando o fluxo seca, o caixa seca junto</li>
+      <li>Já tentou postar no Instagram mas parece que ninguém vê, ninguém chama</li>
+      <li>Não sabe como aparecer quando alguém pesquisa "barbearia perto de mim"</li>
+      <li>Perde cliente porque não responde rápido ou não sabe conduzir até o agendamento</li>
+    </ul>
+  </div>
+</section>
+
+<!-- APP SHOWCASE -->
+<section class="app-showcase">
+  <div class="container">
+    <div class="app-showcase-inner">
+
+      <!-- TEXT -->
+      <div class="app-text">
+        <p class="section-tag">Como o conteúdo é entregue</p>
+        <h2>Tudo no seu<br/><em>celular.</em> Agora.</h2>
+        <p>Ao comprar, você acessa um web app direto pelo navegador do celular — sem instalar nada. Seus 4 módulos e o bônus estarão organizados e prontos para consumir onde e quando quiser.</p>
+        <ul class="app-features">
+          <li><div class="app-feat-dot"></div> Abre direto no Chrome ou Safari</li>
+          <li><div class="app-feat-dot"></div> Vídeos curtos + textos em cada módulo</li>
+          <li><div class="app-feat-dot"></div> Navegue por pilar na ordem que preferir</li>
+          <li><div class="app-feat-dot"></div> Funciona em qualquer celular</li>
+          <li><div class="app-feat-dot"></div> Sem app store, sem cadastro complicado</li>
+        </ul>
+      </div>
+
+      <!-- PHONE MOCKUP -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="phone-notch">
+            <div class="phone-notch-bar"></div>
+            <div class="phone-notch-cam"></div>
+          </div>
+
+          <div class="phone-screen">
+            <!-- status bar -->
+            <div class="app-status">
+              <span>9:41</span>
+              <span style="display:flex;gap:4px;align-items:center;">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><rect x="0" y="4" width="2" height="4" rx="0.5" fill="#555"/><rect x="3" y="2.5" width="2" height="5.5" rx="0.5" fill="#555"/><rect x="6" y="1" width="2" height="7" rx="0.5" fill="#777"/><rect x="8.5" y="0" width="1.5" height="8" rx="0.5" fill="#999"/></svg>
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><rect x="0.5" y="0.5" width="10" height="7" rx="1.5" stroke="#555" stroke-width="0.8"/><rect x="10.5" y="2.5" width="1" height="3" rx="0.5" fill="#555"/><rect x="1.5" y="1.5" width="7" height="5" rx="1" fill="#999"/></svg>
+              </span>
+            </div>
+
+            <!-- header -->
+            <div class="app-header">
+              <div class="app-header-top">
+                <div class="app-logo">Barbearia<span>Cheia</span></div>
+                <div class="app-avatar">JR</div>
+              </div>
+              <div class="app-header-sub">Olá, João · Bem-vindo ao seu treinamento</div>
+            </div>
+
+            <!-- welcome strip -->
+            <div class="app-welcome">
+              <div class="app-welcome-label">Seu plano</div>
+              <div class="app-welcome-title">Como Atrair Clientes Todo Mês</div>
+            </div>
+
+            <!-- progress -->
+            <div class="app-progress-row">
+              <div class="app-progress-bar-bg">
+                <div class="app-progress-bar-fill"></div>
+              </div>
+              <div class="app-progress-text">1 de 5 módulos</div>
+            </div>
+
+            <!-- modules -->
+            <div class="app-modules-label">Seus módulos</div>
+
+            <div class="app-module-item active">
+              <div class="app-module-icon google">🗺️</div>
+              <div class="app-module-info">
+                <div class="app-module-name">Perfil no Google</div>
+                <div class="app-module-sub">5 aulas · Google Business Profile</div>
+              </div>
+              <div class="app-module-badge badge-done">✓</div>
+            </div>
+
+            <div class="app-module-item">
+              <div class="app-module-icon ads">🎯</div>
+              <div class="app-module-info">
+                <div class="app-module-name">Google Ads</div>
+                <div class="app-module-sub">5 aulas · Anúncios de busca</div>
+              </div>
+              <div class="app-module-badge badge-new">Novo</div>
+            </div>
+
+            <div class="app-module-item">
+              <div class="app-module-icon insta">📸</div>
+              <div class="app-module-info">
+                <div class="app-module-name">Instagram Ads</div>
+                <div class="app-module-sub">6 aulas · Anúncios locais</div>
+              </div>
+              <div class="app-module-badge badge-lock">🔒</div>
+            </div>
+
+            <div class="app-module-item">
+              <div class="app-module-icon whats">💬</div>
+              <div class="app-module-info">
+                <div class="app-module-name">WhatsApp Business</div>
+                <div class="app-module-sub">6 aulas · Do contato ao agendamento</div>
+              </div>
+              <div class="app-module-badge badge-lock">🔒</div>
+            </div>
+
+            <div class="app-module-item" style="border-bottom:none;">
+              <div class="app-module-icon bonus">🎁</div>
+              <div class="app-module-info">
+                <div class="app-module-name" style="color:#E8B84B;">30 Ideias de Reels</div>
+                <div class="app-module-sub">Bônus · Instagram e TikTok</div>
+              </div>
+              <div class="app-module-badge badge-lock">🔒</div>
+            </div>
+
+          </div><!-- /screen -->
+        </div><!-- /phone -->
+      </div><!-- /phone-wrap -->
+
+    </div>
+  </div>
+</section>
+
+<!-- MODULES DETAIL -->
+<section class="what" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div class="container">
+    <p class="section-tag">O que está dentro de cada módulo</p>
+    <h2>4 pilares. Do zero ao cliente agendado.</h2>
+    <p class="what-intro">Cada módulo aborda um canal do início ao fim — você sai sabendo configurar, anunciar e medir resultado.</p>
+
+    <div class="module-block">
+      <div class="module-header">
+        <div class="module-icon"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="5" stroke="#E8B84B" stroke-width="1.4"/><path d="M10 13v4M7 17h6" stroke="#E8B84B" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div><div class="module-label">Módulo 1</div><div class="module-title">Perfil no Google (Google Business Profile)</div></div>
+      </div>
+      <div class="module-body">
+        <ul class="module-items">
+          <li>Como criar e configurar o perfil do jeito certo</li>
+          <li>Como aparecer no mapa quando alguém buscar "barbearia perto de mim"</li>
+          <li>Como melhorar seu posicionamento nas buscas sem pagar nada</li>
+          <li>Como conseguir avaliações dos seus clientes de forma natural</li>
+          <li>Como transformar quem vê seu perfil em quem manda mensagem</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module-block">
+      <div class="module-header">
+        <div class="module-icon"><svg viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="16" height="11" rx="2" stroke="#E8B84B" stroke-width="1.4"/><path d="M6 9h8M6 12h5" stroke="#E8B84B" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div><div class="module-label">Módulo 2</div><div class="module-title">Anúncios no Google (Google Ads)</div></div>
+      </div>
+      <div class="module-body">
+        <ul class="module-items">
+          <li>Como anunciar exatamente para quem já está buscando barbearia na sua região</li>
+          <li>Como configurar campanha para sua cidade ou bairro</li>
+          <li>Como definir orçamento pequeno e eficiente (exemplo: R$10–20 por dia)</li>
+          <li>Como entender se os cliques estão virando contatos de verdade</li>
+          <li>Como calcular se o investimento está trazendo lucro</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module-block">
+      <div class="module-header">
+        <div class="module-icon"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="4" stroke="#E8B84B" stroke-width="1.4"/><circle cx="10" cy="10" r="3" stroke="#E8B84B" stroke-width="1.4"/><circle cx="14.5" cy="5.5" r="1" fill="#E8B84B"/></svg></div>
+        <div><div class="module-label">Módulo 3</div><div class="module-title">Instagram Ads</div></div>
+      </div>
+      <div class="module-body">
+        <ul class="module-items">
+          <li>Como funciona na prática — sem enrolação</li>
+          <li>Como escolher o objetivo certo do anúncio para atrair clientes</li>
+          <li>Como segmentar só pessoas da sua região</li>
+          <li>Como definir quanto gastar sem desperdiçar</li>
+          <li>Como criar anúncio que leva direto para o WhatsApp</li>
+          <li>Como saber se o retorno vale o investimento</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="module-block">
+      <div class="module-header">
+        <div class="module-icon"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2a8 8 0 1 1-5.3 14L2 18l2.1-2.6A8 8 0 0 1 10 2z" stroke="#E8B84B" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9c0 3 6 5 6 2v-1l-2-1-1 1s-2-1-2-3l1-1-1-2H7v1" stroke="#E8B84B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="module-label">Módulo 4</div><div class="module-title">WhatsApp Business</div></div>
+      </div>
+      <div class="module-body">
+        <ul class="module-items">
+          <li>Como configurar o perfil profissional que passa confiança</li>
+          <li>Como organizar respostas rápidas para não perder tempo</li>
+          <li>Como atender rápido e não deixar cliente esperando</li>
+          <li>Como conduzir a conversa até o agendamento sem ser chato</li>
+          <li>Como usar mensagem automática e catálogo de serviços</li>
+          <li>Como transformar "tenho interesse" em cliente agendado</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bonus-block">
+      <div class="bonus-header">
+        <div class="bonus-title">30 Ideias de Reels prontas</div>
+        <div class="bonus-desc">30 ideias prontas para você gravar e postar no Instagram e TikTok — sem precisar inventar do zero nunca mais</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOR WHOM -->
+<section class="for-whom">
+  <div class="container">
+    <p class="section-tag">Para quem é</p>
+    <h2>Isso é pra você se...</h2>
+    <div class="checks">
+      <div class="check-item"><div class="check-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Você trabalha como barbeiro e quer ter mais clientes novos todo mês</div>
+      <div class="check-item"><div class="check-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Não entende nada de marketing digital — mas quer aprender do jeito certo</div>
+      <div class="check-item"><div class="check-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Quer parar de depender de indicação e ter previsibilidade de clientes</div>
+      <div class="check-item"><div class="check-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Prefere conteúdo direto ao ponto — sem hora de aula para aprender uma coisa</div>
+      <div class="check-item"><div class="check-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#E8B84B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Quer aplicar ainda essa semana, na sua cidade, com o seu orçamento</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <div class="container">
+    <p class="section-tag">Por que confiar</p>
+    <h2>Produto novo. Garantia real.</h2>
+    <p class="trust-sub">Sem histórias inventadas. O que você tem é conteúdo que funciona — e uma garantia que tira qualquer risco da sua decisão.</p>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-card-icon"><svg viewBox="0 0 18 18" fill="none"><path d="M9 2L3 5v4c0 4 2.7 6.5 6 7.5 3.3-1 6-3.5 6-7.5V5L9 2z" stroke="#E8B84B" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        <div class="trust-card-title">7 dias de garantia incondicional</div>
+        <div class="trust-card-desc">Se não gostar por qualquer motivo, devolvo 100% do valor. Sem perguntas, sem burocracia.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-card-icon"><svg viewBox="0 0 18 18" fill="none"><path d="M4 14V7l5-4 5 4v7H4z" stroke="#E8B84B" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 14v-4h4v4" stroke="#E8B84B" stroke-width="1.4" stroke-linejoin="round"/></svg></div>
+        <div class="trust-card-title">Conteúdo prático, não teórico</div>
+        <div class="trust-card-desc">Cada módulo mostra exatamente o que fazer — passo a passo, sem vocabulário de agência.</div>
+      </div>
+      <div class="trust-card">
+        <div class="trust-card-icon"><svg viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#E8B84B" stroke-width="1.4"/><path d="M9 6v3l2 2" stroke="#E8B84B" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div class="trust-card-title">Acesso imediato e vitalício</div>
+        <div class="trust-card-desc">Comprou, já está disponível. Assista no ritmo que quiser, quantas vezes precisar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <p class="section-tag">Oferta de lançamento</p>
+    <h2>Invista menos que um corte.<br/>Lucre muito mais.</h2>
+    <p class="pricing-sub">Preço de lançamento — pode aumentar a qualquer momento</p>
+    <div class="price-box">
+      <p class="price-old">De R$ 97</p>
+      <div class="price-val" style="font-size:52px;">R$ 47,59</div>
+      <p class="price-period">pagamento único · acesso vitalício</p>
+      <ul class="price-features">
+        <li><span>✓</span> Módulo 1: Perfil no Google (Google Business)</li>
+        <li><span>✓</span> Módulo 2: Anúncios no Google (Google Ads)</li>
+        <li><span>✓</span> Módulo 3: Instagram Ads</li>
+        <li><span>✓</span> Módulo 4: WhatsApp Business</li>
+        <li><span>✓</span> Bônus: 30 Ideias de Reels prontas</li>
+        <li><span>✓</span> Web app · acesso direto pelo celular</li>
+        <li><span>✓</span> Atualizações inclusas sem custo extra</li>
+      </ul>
+      <a href="#" class="btn-primary" style="display:block;text-align:center;">Garantir acesso agora — R$47,59</a>
+      <div class="guarantee">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L2 3v4c0 3 2.5 5.2 5 6 2.5-.8 5-3 5-6V3L7 1z" stroke="#8A8680" stroke-width="1.2" fill="none"/></svg>
+        Garantia de 7 dias — devolução total sem questionamentos
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="container">
+    <h2>Sua agenda pode ser<br/><em>diferente esse mês.</em></h2>
+    <p>O passo que falta não é cortar melhor. É saber como fazer o cliente chegar até você.</p>
+    <a href="#pricing" class="btn-primary">Quero minha agenda lotada</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2025 · Todos os direitos reservados</p>
+    <p style="margin-top:8px;">
+      <a href="#" style="color:var(--muted);text-decoration:none;">Política de Privacidade</a>
+      &nbsp;·&nbsp;
+      <a href="#" style="color:var(--muted);text-decoration:none;">Termos de Uso</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
